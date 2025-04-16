@@ -1,4 +1,10 @@
-import Teste
+def getName (name: String) := s!"Hello, {name}!"
+
 
 def main : IO Unit :=
-  IO.println s!"Hello, {hello}!"
+  let names := ["ramon", "Maria"]
+
+  let greetings := names.map getName
+
+  for greeting in greetings do
+    IO.println greeting
