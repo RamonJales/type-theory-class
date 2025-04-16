@@ -1,5 +1,9 @@
 open Sum
 
+def inv (f : α → β) (f' : β → α) := f ∘ f'= id ∧ id = f'∘ f
+def iso (f : α → β) := ∃f': β → α, inv f f'
+def type_isomorphism (α β : Type) := ∃f : α → β, iso f
+
 -- γ ⨯ (α + β) ≅ (γ ⨯ α) + (γ ⨯ β)
 def f_distributive : (γ × (α ⊕ β)) → (γ × α) ⊕ (γ × β)
 | (w, inl a) => inl (w, a)
