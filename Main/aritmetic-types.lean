@@ -1,6 +1,9 @@
 open Sum
 
-def inv (f : α → β) (f' : β → α) := f ∘ f'= id ∧ id = f'∘ f
+instance : Add Type where
+  add := Sum
+
+def inv (f : α → β) (f' : β → α) := f ∘ f' = id ∧ id = f'∘ f
 def iso (f : α → β) := ∃f': β → α, inv f f'
 def type_isomorphism (α β : Type) := ∃f : α → β, iso f
 
@@ -12,6 +15,34 @@ def f_distributive : (γ × (α ⊕ β)) → (γ × α) ⊕ (γ × β)
 def f'_distributive : (γ × α) ⊕ (γ × β) → (γ × (α ⊕ β))
 | inl (w, a) => (w, inl a)
 | inr (w, b) => (w, inr b)
+
+-- (α + β) + γ ≅ α + (β + γ)
+def f_add_ass : ((α + β) + γ) → (α + (β + γ))
+  | inl (inl a) => inl a
+  | inl (inr b) => inr (inl b)
+  | inr c => inr (inr c)
+
+def f'_add_ass : (α + (β + γ)) → ((α + β) + γ)
+  | inl a => inl (inl a)
+  | inr (inl b) => inl (inr b)
+  | inr (inr c) => inr c
+
+-- 0 + α ≅ α
+def f_add_id : (Empty + α) → α
+  | inl epty => epty.elim
+  | inr a => a
+
+def f'_add_id : α → (Empty + α)
+  | a => inr a
+
+
+-- (α ⨯ β) ⨯ γ ≅ α ⨯ (β ⨯ γ)
+def f_prod_ass : ((α × β) × γ) → (α × (β × γ))
+  | ((a, b), c) => (a, (b, c))
+
+def f'_prod_ass : (α × (β × γ)) → ((α × β) × γ)
+  | (a, (b, c)) => ((a, b), c)
+
 
 theorem types_distributive {γ α β : Type} :
   (∀ (x : γ × (α ⊕ β)), (f'_distributive ∘ f_distributive) x = x) ∧
@@ -54,3 +85,6 @@ by
             = f_distributive (f'_distributive ((inr (w, b))))   := by rfl
           _ = f_distributive (w, inr b)                         := by rfl
           _ = inr (w, b)                                        := by rfl
+
+theorem type_add_ass {γ α β : Type} : type_isomorphism ((α + β) + γ) (α + (β + γ)) := by
+  sorry
