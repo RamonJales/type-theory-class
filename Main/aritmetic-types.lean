@@ -35,6 +35,12 @@ def f_add_id : (Empty + α) → α
 def f'_add_id : α → (Empty + α)
   | a => inr a
 
+-- 1 × α ≅ α
+def f_prod_id : Unit × α → α
+  | (_, a) => a
+
+def f'_prod_id : α → Unit × α
+  | a => ((), a) --or (Unit.unit, a)
 
 -- (α ⨯ β) ⨯ γ ≅ α ⨯ (β ⨯ γ)
 def f_prod_ass : ((α × β) × γ) → (α × (β × γ))
@@ -42,6 +48,30 @@ def f_prod_ass : ((α × β) × γ) → (α × (β × γ))
 
 def f'_prod_ass : (α × (β × γ)) → ((α × β) × γ)
   | (a, (b, c)) => ((a, b), c)
+
+-- δ^α+β ≅ δ^α ⨯ δ^β
+def f_exp_distributive {α : Type u} {β : Type v} {δ : Type w} :
+  ((α ⊕ β) → δ) → ((α → δ) × (β → δ))
+| f => (fun a => f (inl a), fun b => f (inr b))
+
+
+def f'_exp_distributive {α : Type u} {β : Type v} {δ : Type w} :
+  (((α → δ) × (β → δ) → (α ⊕ β) → δ))
+  | (f, f') => fun w => match w with
+                    | inl a => f a
+                    | inr b => f' b
+-- note que w não é usado, logo podemos definir assim:
+  -- | (f, f') => λ
+  --               | inl a => f a
+  --               | inr b => f' b
+
+
+-- (γ^β)^α ≅ γ^{β ⨯ α}
+def f_exp_curry : (α → β → δ) → ((α × β) → δ)
+  | f => fun (a,b) => f a b
+
+def f'_exp_curry : ((α × β) → δ) → (α → β → δ)
+  | f => fun a => fun b => f (a,b)
 
 
 theorem types_distributive {γ α β : Type} :
